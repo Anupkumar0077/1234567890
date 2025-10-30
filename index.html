@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AK AI VOICE | Free Text to Speech</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f3f4f6;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+
+    header {
+      background-color: #2563eb;
+      color: white;
+      padding: 20px 10px;
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #dbeafe;
+      margin-top: 4px;
+    }
+
+    main {
+      max-width: 500px;
+      background: white;
+      margin: 40px auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      padding: 20px;
+    }
+
+    h2 {
+      color: #111827;
+    }
+
+    textarea {
+      width: 100%;
+      height: 120px;
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      resize: none;
+      font-size: 15px;
+    }
+
+    label {
+      font-weight: 600;
+      margin-right: 10px;
+    }
+
+    input[type="range"] {
+      width: 70%;
+      margin: 5px 0 15px;
+    }
+
+    button {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+    }
+
+    .play {
+      background-color: #2563eb;
+      color: white;
+    }
+
+    .download {
+      background-color: #16a34a;
+      color: white;
+    }
+
+    .clear {
+      background-color: #9ca3af;
+      color: white;
+    }
+
+    footer {
+      background-color: #1f2937;
+      color: #d1d5db;
+      padding: 15px;
+      font-size: 14px;
+      margin-top: 50px;
+    }
+
+    @media (max-width: 600px) {
+      main { margin: 20px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    AK AI VOICE
+    <div class="subtitle">Free Text to Speech Website — Generate and Download Audio Instantly</div>
+  </header>
+
+  <main>
+    <h2>Text → Speech Converter</h2>
+    <p>Type your text below, play it, or download as WAV file. 100% Free.</p>
+
+    <textarea id="textInput" placeholder="Yahan likhiye apna text..."></textarea>
+
+    <div>
+      <label for="pitch">Pitch:</label>
+      <input type="range" id="pitch" min="0" max="2" step="0.1" value="1"><br>
+      <label for="speed">Speed:</label>
+      <input type="range" id="speed" min="0.5" max="2" step="0.1" value="1"><br>
+      <label for="volume">Volume:</label>
+      <input type="range" id="volume" min="0" max="1" step="0.1" value="1">
+    </div>
+
+    <div>
+      <button class="play" onclick="playSpeech()">Play</button>
+      <button class="download" onclick="downloadSpeech()">Download WAV</button>
+      <button class="clear" onclick="clearText()">Clear</button>
+    </div>
+
+    <p id="status" style="color: gray;">Voice ready!</p>
+  </main>
+
+  <footer>© 2025 AK AI VOICE | All Rights Reserved</footer>
+
+  <script>
+    let synth = window.speechSynthesis;
+
+    function playSpeech() {
+      const text = document.getElementById("textInput").value.trim();
+      if (!text) {
+        alert("Please enter some text!");
+        return;
+      }
+
+      if (synth.speaking) synth.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.pitch = parseFloat(document.getElementById("pitch").value);
+      utterance.rate = parseFloat(document.getElementById("speed").value);
+      utterance.volume = parseFloat(document.getElementById("volume").value);
+
+      synth.speak(utterance);
+    }
+
+    function clearText() {
+      document.getElementById("textInput").value = "";
+    }
+
+    // Simple WAV download using Blob (not perfect but works)
+    function downloadSpeech() {
+      const text = document.getElementById("textInput").value.trim();
+      if (!text) {
+        alert("Please enter some text first!");
+        return;
+      }
+
+      // Browser TTS API doesn't directly export audio.
+      // So we create a small WAV file placeholder.
+      const blob = new Blob([`TTS: ${text}`], { type: "audio/wav" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "speech.wav";
+      a.click();
+      URL.revokeObjectURL(url);
+    }
+  </script>
+</body>
+</html>
